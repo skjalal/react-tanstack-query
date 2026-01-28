@@ -15,7 +15,7 @@ type ErrorBlockProps = {
 };
 
 type ModalProps = {
-  onClose: () => void;
+  onClose?: () => void;
 };
 
 type Event = {

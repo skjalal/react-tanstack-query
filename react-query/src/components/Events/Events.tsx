@@ -1,5 +1,5 @@
 import React, { type JSX } from "react";
-import { Link, Outlet } from "react-router-dom";
+import { Link } from "react-router-dom";
 
 import Header from "../Header.tsx";
 import EventsIntroSection from "./EventsIntroSection.tsx";
@@ -9,7 +9,6 @@ import NewEventsSection from "./NewEventsSection.tsx";
 const Events: React.FC = (): JSX.Element => {
   return (
     <>
-      <Outlet />
       <Header>
         <Link to="/events/new" className="button">
           New Event
