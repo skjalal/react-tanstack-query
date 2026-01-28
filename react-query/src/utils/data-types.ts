@@ -41,6 +41,8 @@ type EventItemProps = {
   event: Event;
 };
 
+type SearchType = { searchTerm?: string; signal: AbortSignal };
+
 export type {
   Image,
   ImagePickerProps,
@@ -50,4 +52,5 @@ export type {
   EventFormProps,
   EventItemProps,
   Data,
+  SearchType,
 };

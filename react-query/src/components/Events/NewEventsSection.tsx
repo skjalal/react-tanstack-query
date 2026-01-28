@@ -10,11 +10,11 @@ import type ApiError from "../../utils/ApiError.ts";
 
 const NewEventsSection: React.FC = (): JSX.Element => {
   const { data, isPending, isError, error }: UseQueryResult<Event[], ApiError> =
-    useQuery({
+    useQuery<Event[], ApiError>({
       queryKey: ["events"],
       queryFn: fetchEvents,
-      staleTime: 5000,
-      gcTime: 30000,
+      // staleTime: 5000,
+      // gcTime: 30000,
     });
 
   let content;

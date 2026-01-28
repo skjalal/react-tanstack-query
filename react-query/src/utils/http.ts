@@ -1,8 +1,13 @@
 import ApiError from "./ApiError";
-import type { Data, Event } from "./data-types";
+import type { Data, Event, SearchType } from "./data-types";
 
-export async function fetchEvents(): Promise<Event[]> {
-  const response = await fetch("http://localhost:3000/events");
+export async function fetchEvents(search: SearchType): Promise<Event[]> {
+  const { searchTerm, signal } = search;
+  let url = "http://localhost:3000/events";
+  if (searchTerm && searchTerm !== "") {
+    url += "?search=" + searchTerm;
+  }
+  const response = await fetch(url, { signal: signal });
 
   if (!response.ok) {
     throw new ApiError(
