@@ -5,14 +5,16 @@ import LoadingIndicator from "../../UI/LoadingIndicator.tsx";
 import ErrorBlock from "../../UI/ErrorBlock.tsx";
 import EventItem from "./EventItem.tsx";
 import { fetchEvents } from "../../utils/http.ts";
-import type { Event } from "../../utils/data-types.ts";
+import type { Event, EventKey } from "../../utils/data-types.ts";
 import type ApiError from "../../utils/ApiError.ts";
 
 const NewEventsSection: React.FC = (): JSX.Element => {
   const { data, isPending, isError, error }: UseQueryResult<Event[], ApiError> =
-    useQuery<Event[], ApiError>({
-      queryKey: ["events"],
-      queryFn: fetchEvents,
+    useQuery<Event[], ApiError, Event[], EventKey>({
+      queryKey: ["events", { max: 3 }],
+      queryFn: ({ signal, queryKey }) => {
+        return fetchEvents({ signal, ...queryKey[1] });
+      },
       // staleTime: 5000,
       // gcTime: 30000,
     });

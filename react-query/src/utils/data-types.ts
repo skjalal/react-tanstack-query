@@ -53,7 +53,12 @@ type DeleteResponse = {
   message: string;
 };
 
-type SearchType = { searchTerm?: string; signal: AbortSignal; id?: string };
+type SearchType = {
+  searchTerm?: string;
+  signal: AbortSignal;
+  id?: string;
+  max?: number;
+};
 type ImageData = {
   images: Image[];
 };
@@ -66,6 +71,8 @@ type EventUpdateRequest = {
 type MutationContext = {
   previousEvent: Event;
 };
+
+type EventKey = readonly ["events", { searchTerm?: string; max?: number }];
 
 export type {
   Image,
@@ -83,4 +90,5 @@ export type {
   DeleteResponse,
   EventUpdateRequest,
   MutationContext,
+  EventKey,
 };

@@ -15,10 +15,14 @@ import type {
 export const queryClient = new QueryClient();
 
 export async function fetchEvents(search: SearchType): Promise<Event[]> {
-  const { searchTerm, signal } = search;
+  const { searchTerm, signal, max } = search;
   let url = "http://localhost:3000/events";
-  if (searchTerm && searchTerm !== "") {
+  if (searchTerm && searchTerm !== "" && max) {
+    url += "?search=" + searchTerm + "&max=" + max;
+  } else if (searchTerm && searchTerm !== "") {
     url += "?search=" + searchTerm;
+  } else if (max) {
+    url += "?max=" + max;
   }
   const response = await fetch(url, { signal: signal });
 

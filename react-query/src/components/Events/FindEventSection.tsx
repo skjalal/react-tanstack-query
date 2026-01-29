@@ -3,7 +3,7 @@ import { useQuery, type UseQueryResult } from "@tanstack/react-query";
 import ErrorBlock from "../../UI/ErrorBlock.tsx";
 import LoadingIndicator from "../../UI/LoadingIndicator.tsx";
 import EventItem from "./EventItem.tsx";
-import type { Event } from "../../utils/data-types.ts";
+import type { Event, EventKey } from "../../utils/data-types.ts";
 import { fetchEvents } from "../../utils/http.ts";
 import type ApiError from "../../utils/ApiError.ts";
 
@@ -11,9 +11,10 @@ const FindEventSection: React.FC = (): JSX.Element => {
   const [searchTerm, setSearchTerm] = useState<string>("");
   const searchElement = useRef<HTMLInputElement>(null);
   const { data, isLoading, isError, error }: UseQueryResult<Event[], ApiError> =
-    useQuery<Event[], ApiError>({
-      queryKey: ["events", { search: searchTerm }],
-      queryFn: ({ signal }) => fetchEvents({ searchTerm, signal }),
+    useQuery<Event[], ApiError, Event[], EventKey>({
+      queryKey: ["events", { searchTerm }],
+      queryFn: ({ signal, queryKey }) =>
+        fetchEvents({ signal, ...queryKey[1] }),
       enabled: searchTerm !== "",
       // staleTime: 5000,
       // gcTime: 30000,
