@@ -58,6 +58,15 @@ type ImageData = {
   images: Image[];
 };
 
+type EventUpdateRequest = {
+  id?: string;
+  event: Event;
+};
+
+type MutationContext = {
+  previousEvent: Event;
+};
+
 export type {
   Image,
   ImagePickerProps,
@@ -72,4 +81,6 @@ export type {
   ImageData,
   DeleteRequest,
   DeleteResponse,
+  EventUpdateRequest,
+  MutationContext,
 };

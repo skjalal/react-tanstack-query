@@ -1,20 +1,94 @@
 import React, { type JSX } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
+import { useQuery, useMutation } from "@tanstack/react-query";
 
 import Modal from "../../UI/Modal.tsx";
 import EventForm from "./EventForm.tsx";
-import type { Event } from "../../utils/data-types.ts";
+import LoadingIndicator from "../../UI/LoadingIndicator.tsx";
+import ErrorBlock from "../../UI/ErrorBlock.tsx";
+import type {
+  Event,
+  EventRequest,
+  EventUpdateRequest,
+  MutationContext,
+} from "../../utils/data-types.ts";
+import { fetchEvent, updateEvent, queryClient } from "../../utils/http.ts";
+import type ApiError from "../../utils/ApiError.ts";
 
 const EditEvent: React.FC = (): JSX.Element => {
   const navigate = useNavigate();
-  const handleSubmit = (event: Event): void => {
-    console.log(event);
-  };
-  const handleClose = () => navigate("../");
 
-  return (
-    <Modal onClose={handleClose}>
-      <EventForm onSubmit={handleSubmit}>
+  const { id } = useParams<string>();
+  const { data, isPending, isError, error } = useQuery<Event, ApiError>({
+    queryKey: ["events", id],
+    queryFn: ({ signal }) => fetchEvent({ id, signal }),
+  });
+
+  const { mutate } = useMutation<
+    EventRequest,
+    ApiError,
+    EventUpdateRequest,
+    MutationContext
+  >({
+    mutationFn: updateEvent,
+    onMutate: async (data): Promise<MutationContext> => {
+      const newEvent: Event = data.event;
+      await queryClient.cancelQueries<string[]>({ queryKey: ["events", id!] });
+      const previousEvent: Event = queryClient.getQueryData<Event, string[]>([
+        "events",
+        id!,
+      ])!;
+      queryClient.setQueryData<Event, string[]>(["events", id!], newEvent);
+      return { previousEvent };
+    },
+    onError: (_error, _data, context) => {
+      queryClient.setQueryData<Event, string[]>(
+        ["events", id!],
+        context?.previousEvent,
+      );
+    },
+    onSettled: () => {
+      queryClient.invalidateQueries<string[]>({
+        queryKey: ["events", id!],
+      });
+    },
+  });
+
+  const handleSubmit = (event: Event): void => {
+    mutate({ id, event });
+    navigate("../");
+  };
+
+  let content: JSX.Element = <></>;
+  if (isPending) {
+    content = (
+      <div className="center">
+        <LoadingIndicator />
+      </div>
+    );
+  }
+  if (isError) {
+    content = (
+      <>
+        <ErrorBlock
+          title="Failed to load event"
+          message={
+            error.info?.message ||
+            "Failed to load event, Please check your input and try again later. "
+          }
+        />
+        <div className="form-actions">
+          <Link to="/events" className="button">
+            Okay
+          </Link>
+        </div>
+      </>
+    );
+  }
+
+  if (data) {
+    content = (
+      <EventForm onSubmit={handleSubmit} inputData={data}>
         <Link to="../" className="button-text">
           Cancel
         </Link>
@@ -22,8 +96,10 @@ const EditEvent: React.FC = (): JSX.Element => {
           Update
         </button>
       </EventForm>
-    </Modal>
-  );
+    );
+  }
+
+  return <Modal>{content}</Modal>;
 };
 
 export default EditEvent;

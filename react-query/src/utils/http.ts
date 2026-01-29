@@ -9,6 +9,7 @@ import type {
   Image,
   DeleteRequest,
   DeleteResponse,
+  EventUpdateRequest,
 } from "./data-types";
 
 export const queryClient = new QueryClient();
@@ -104,6 +105,29 @@ export async function deleteEvent({
   if (!response.ok) {
     throw new ApiError(
       "An error occurred while deleting the event",
+      response.status,
+      await response.json(),
+    );
+  }
+
+  return response.json();
+}
+
+export async function updateEvent({
+  id,
+  event,
+}: EventUpdateRequest): Promise<EventRequest> {
+  const response = await fetch(`http://localhost:3000/events/${id}`, {
+    method: "PUT",
+    body: JSON.stringify({ event }),
+    headers: {
+      "Content-Type": "application/json",
+    },
+  });
+
+  if (!response.ok) {
+    throw new ApiError(
+      "An error occurred while updating the event",
       response.status,
       await response.json(),
     );
