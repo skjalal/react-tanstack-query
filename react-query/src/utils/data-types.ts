@@ -46,6 +46,9 @@ type EventRequest = {
 };
 
 type SearchType = { searchTerm?: string; signal: AbortSignal };
+type ImageData = {
+  images: Image[];
+};
 
 export type {
   Image,
@@ -58,4 +61,5 @@ export type {
   Data,
   SearchType,
   EventRequest,
+  ImageData,
 };

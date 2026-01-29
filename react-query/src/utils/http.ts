@@ -1,5 +1,12 @@
 import ApiError from "./ApiError";
-import type { Data, Event, SearchType, EventRequest } from "./data-types";
+import type {
+  Data,
+  Event,
+  SearchType,
+  EventRequest,
+  ImageData,
+  Image,
+} from "./data-types";
 
 export async function fetchEvents(search: SearchType): Promise<Event[]> {
   const { searchTerm, signal } = search;
@@ -41,4 +48,25 @@ export async function createNewEvent(eventData: EventRequest): Promise<Event> {
   const { event } = await response.json();
 
   return event;
+}
+
+export async function fetchSelectableImages(
+  search: SearchType,
+): Promise<Image[]> {
+  const { signal } = search;
+  const response = await fetch(`http://localhost:3000/events/images`, {
+    signal,
+  });
+
+  if (!response.ok) {
+    throw new ApiError(
+      "An error occurred while fetching the images",
+      response.status,
+      await response.json(),
+    );
+  }
+
+  const { images }: ImageData = await response.json();
+
+  return images;
 }
