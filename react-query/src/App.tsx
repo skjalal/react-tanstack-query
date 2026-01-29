@@ -10,7 +10,8 @@ import EventsRootLayout from "./UI/EventsRoot.tsx";
 import EventDetails from "./components/Events/EventDetails.tsx";
 import NewEvent from "./components/Events/NewEvent.tsx";
 import EditEvent from "./components/Events/EditEvent.tsx";
-import { QueryClientProvider, QueryClient } from "@tanstack/react-query";
+import { QueryClientProvider } from "@tanstack/react-query";
+import { queryClient } from "./utils/http.ts";
 
 import "./App.css";
 
@@ -49,7 +50,6 @@ const routes: RouteObject[] = [
 ];
 const router: DataRouter = createBrowserRouter(routes);
 function App() {
-  const queryClient = new QueryClient();
   return (
     <QueryClientProvider client={queryClient}>
       <RouterProvider router={router} />

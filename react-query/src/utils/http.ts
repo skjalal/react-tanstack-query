@@ -1,3 +1,4 @@
+import { QueryClient } from "@tanstack/react-query";
 import ApiError from "./ApiError";
 import type {
   Data,
@@ -7,6 +8,8 @@ import type {
   ImageData,
   Image,
 } from "./data-types";
+
+export const queryClient = new QueryClient();
 
 export async function fetchEvents(search: SearchType): Promise<Event[]> {
   const { searchTerm, signal } = search;

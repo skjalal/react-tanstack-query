@@ -1,21 +1,28 @@
 import React, { type JSX } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useMutation } from "@tanstack/react-query";
 
 import EventForm from "./EventForm.tsx";
 import type { Event, EventRequest } from "../../utils/data-types.js";
 import Modal from "../../UI/Modal.tsx";
 import type ApiError from "../../utils/ApiError.ts";
-import { createNewEvent } from "../../utils/http.ts";
+import { createNewEvent, queryClient } from "../../utils/http.ts";
 import ErrorBlock from "../../UI/ErrorBlock.tsx";
 
 const NewEvent: React.FC = (): JSX.Element => {
+  const navigate = useNavigate();
   const { mutate, isPending, isError, error } = useMutation<
     Event,
     ApiError,
     EventRequest
   >({
     mutationFn: createNewEvent,
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ["events"],
+      });
+      navigate("/events");
+    },
   });
   const handleSubmit = (event: Event): void => {
     mutate({ event });
