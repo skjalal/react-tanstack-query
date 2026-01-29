@@ -3,6 +3,7 @@ import {
   RouterProvider,
   type DataRouter,
   type RouteObject,
+  Navigate,
 } from "react-router-dom";
 import Events from "./components/Events/Events.tsx";
 import EventsRootLayout from "./UI/EventsRoot.tsx";
@@ -12,40 +13,36 @@ import EditEvent from "./components/Events/EditEvent.tsx";
 import { QueryClientProvider, QueryClient } from "@tanstack/react-query";
 
 import "./App.css";
-import RootLayout from "./UI/Root.tsx";
 
 const routes: RouteObject[] = [
   {
     path: "/",
-    id: "root",
-    element: <RootLayout />,
+    element: <Navigate replace to="/events" />,
+  },
+  {
+    path: "/events",
+    element: <EventsRootLayout />,
     children: [
       {
-        path: "events",
-        element: <EventsRootLayout />,
+        index: true,
+        element: <Events />,
+      },
+      {
+        path: ":id",
         children: [
           {
             index: true,
-            element: <Events />,
+            element: <EventDetails />,
           },
           {
-            path: ":id",
-            children: [
-              {
-                index: true,
-                element: <EventDetails />,
-              },
-              {
-                path: "edit",
-                element: <EditEvent />,
-              },
-            ],
-          },
-          {
-            path: "new",
-            element: <NewEvent />,
+            path: "edit",
+            element: <EditEvent />,
           },
         ],
+      },
+      {
+        path: "new",
+        element: <NewEvent />,
       },
     ],
   },

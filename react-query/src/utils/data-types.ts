@@ -41,6 +41,10 @@ type EventItemProps = {
   event: Event;
 };
 
+type EventRequest = {
+  event: Event;
+};
+
 type SearchType = { searchTerm?: string; signal: AbortSignal };
 
 export type {
@@ -53,4 +57,5 @@ export type {
   EventItemProps,
   Data,
   SearchType,
+  EventRequest,
 };
