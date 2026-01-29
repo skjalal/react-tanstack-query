@@ -45,7 +45,15 @@ type EventRequest = {
   event: Event;
 };
 
-type SearchType = { searchTerm?: string; signal: AbortSignal };
+type DeleteRequest = {
+  id?: string;
+};
+
+type DeleteResponse = {
+  message: string;
+};
+
+type SearchType = { searchTerm?: string; signal: AbortSignal; id?: string };
 type ImageData = {
   images: Image[];
 };
@@ -62,4 +70,6 @@ export type {
   SearchType,
   EventRequest,
   ImageData,
+  DeleteRequest,
+  DeleteResponse,
 };

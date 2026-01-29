@@ -7,6 +7,8 @@ import type {
   EventRequest,
   ImageData,
   Image,
+  DeleteRequest,
+  DeleteResponse,
 } from "./data-types";
 
 export const queryClient = new QueryClient();
@@ -72,4 +74,40 @@ export async function fetchSelectableImages(
   const { images }: ImageData = await response.json();
 
   return images;
+}
+
+export async function fetchEvent({ id, signal }: SearchType): Promise<Event> {
+  const response = await fetch(`http://localhost:3000/events/${id}`, {
+    signal,
+  });
+
+  if (!response.ok) {
+    throw new ApiError(
+      "An error occurred while fetching the event",
+      response.status,
+      await response.json(),
+    );
+  }
+
+  const { event }: EventRequest = await response.json();
+
+  return event;
+}
+
+export async function deleteEvent({
+  id,
+}: DeleteRequest): Promise<DeleteResponse> {
+  const response = await fetch(`http://localhost:3000/events/${id}`, {
+    method: "DELETE",
+  });
+
+  if (!response.ok) {
+    throw new ApiError(
+      "An error occurred while deleting the event",
+      response.status,
+      await response.json(),
+    );
+  }
+
+  return response.json();
 }
