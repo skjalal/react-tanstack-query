@@ -8,6 +8,7 @@ import LoadingIndicator from "../../UI/LoadingIndicator.tsx";
 import ErrorBlock from "../../UI/ErrorBlock.tsx";
 import type {
   Event,
+  EventKey,
   EventRequest,
   EventUpdateRequest,
   MutationContext,
@@ -19,8 +20,13 @@ const EditEvent: React.FC = (): JSX.Element => {
   const navigate = useNavigate();
 
   const { id } = useParams<string>();
-  const { data, isPending, isError, error } = useQuery<Event, ApiError>({
-    queryKey: ["events", id],
+  const { data, isPending, isError, error } = useQuery<
+    Event,
+    ApiError,
+    Event,
+    EventKey
+  >({
+    queryKey: ["events", { id }],
     queryFn: ({ signal }) => fetchEvent({ id, signal }),
   });
 
@@ -33,23 +39,25 @@ const EditEvent: React.FC = (): JSX.Element => {
     mutationFn: updateEvent,
     onMutate: async (data): Promise<MutationContext> => {
       const newEvent: Event = data.event;
-      await queryClient.cancelQueries<string[]>({ queryKey: ["events", id!] });
-      const previousEvent: Event = queryClient.getQueryData<Event, string[]>([
+      await queryClient.cancelQueries<EventKey>({
+        queryKey: ["events", { id }],
+      });
+      const previousEvent: Event = queryClient.getQueryData<Event, EventKey>([
         "events",
-        id!,
+        { id },
       ])!;
-      queryClient.setQueryData<Event, string[]>(["events", id!], newEvent);
+      queryClient.setQueryData<Event, EventKey>(["events", { id }], newEvent);
       return { previousEvent };
     },
     onError: (_error, _data, context) => {
-      queryClient.setQueryData<Event, string[]>(
-        ["events", id!],
+      queryClient.setQueryData<Event, EventKey>(
+        ["events", { id }],
         context?.previousEvent,
       );
     },
     onSettled: () => {
-      queryClient.invalidateQueries<string[]>({
-        queryKey: ["events", id!],
+      queryClient.invalidateQueries<EventKey>({
+        queryKey: ["events", { id }],
       });
     },
   });

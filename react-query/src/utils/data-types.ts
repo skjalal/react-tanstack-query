@@ -72,7 +72,12 @@ type MutationContext = {
   previousEvent: Event;
 };
 
-type EventKey = readonly ["events", { searchTerm?: string; max?: number }];
+type EventKey = readonly [
+  "events",
+  { id?: string; searchTerm?: string; max?: number },
+];
+
+type ImageKey = readonly ["events-images"];
 
 export type {
   Image,
@@ -91,4 +96,5 @@ export type {
   EventUpdateRequest,
   MutationContext,
   EventKey,
+  ImageKey,
 };

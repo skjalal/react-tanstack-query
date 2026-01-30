@@ -6,7 +6,7 @@ import React, {
 } from "react";
 import { useQuery, type UseQueryResult } from "@tanstack/react-query";
 import ImagePicker from "../ImagePicker.jsx";
-import type { EventFormProps, Image } from "../../utils/data-types";
+import type { EventFormProps, Image, ImageKey } from "../../utils/data-types";
 import type ApiError from "../../utils/ApiError.js";
 import { fetchSelectableImages } from "../../utils/http.js";
 import ErrorBlock from "../../UI/ErrorBlock.js";
@@ -21,7 +21,7 @@ const EventForm: React.FC<PropsWithChildren<EventFormProps>> = ({
   );
 
   const { data, isPending, isError, error }: UseQueryResult<Image[], ApiError> =
-    useQuery<Image[], ApiError>({
+    useQuery<Image[], ApiError, Image[], ImageKey>({
       queryKey: ["events-images"],
       queryFn: fetchSelectableImages,
     });

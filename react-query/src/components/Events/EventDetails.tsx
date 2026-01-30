@@ -7,6 +7,8 @@ import type {
   DeleteRequest,
   DeleteResponse,
   Event,
+  EventKey,
+  MutationContext,
 } from "../../utils/data-types.js";
 import ApiError from "../../utils/ApiError.js";
 import { fetchEvent, deleteEvent, queryClient } from "../../utils/http.js";
@@ -17,8 +19,13 @@ const EventDetails: React.FC = (): JSX.Element => {
   const [isDeleting, setIsDeleting] = useState<boolean>(false);
   const navigate = useNavigate();
   const { id } = useParams<string>();
-  const { data, isPending, isError, error } = useQuery<Event, ApiError>({
-    queryKey: ["events", id],
+  const { data, isPending, isError, error } = useQuery<
+    Event,
+    ApiError,
+    Event,
+    EventKey
+  >({
+    queryKey: ["events", { id }],
     queryFn: ({ signal }) => fetchEvent({ id, signal }),
   });
   const {
@@ -26,10 +33,10 @@ const EventDetails: React.FC = (): JSX.Element => {
     isPending: isPengingDeletion,
     isError: isErrorDeleting,
     error: deleteError,
-  } = useMutation<DeleteResponse, ApiError, DeleteRequest>({
+  } = useMutation<DeleteResponse, ApiError, DeleteRequest, MutationContext>({
     mutationFn: deleteEvent,
     onSuccess: () => {
-      queryClient.invalidateQueries({
+      queryClient.invalidateQueries<EventKey>({
         queryKey: ["events"],
         refetchType: "none",
       });
